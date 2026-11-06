@@ -1,9 +1,9 @@
-import { useState } from 'react'
 
+import { useState } from 'react'
 import NoteCard from './NoteCard.jsx'
 
 function Notes() {
-  const [notes] = useState([
+  const [notes, setNotes] = useState([
     {
       id: 1,
       title: "Review map and filter",
@@ -23,11 +23,34 @@ function Notes() {
 
   function handleChange(event) {
     const { name, value } = event.target
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: value
     }))
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    const trimmedTitle = formData.title.trim()
+    const trimmedBody = formData.body.trim()
+
+    // Prevent adding if title or body is empty after trimming spaces
+    if (!trimmedTitle || !trimmedBody) return
+
+    const newNote = {
+      id: Date.now(),
+      title: trimmedTitle,
+      body: trimmedBody
+    }
+
+    setNotes((prevNotes) => [...prevNotes, newNote])
+
+    // Reset input fields
+    setFormData({
+      title: '',
+      body: ''
+    })
   }
 
   return (
@@ -38,21 +61,15 @@ function Notes() {
         </h1>
 
         <div>
-          <p className="mb-2 text-[13px] font-normal tracking-wide text-[#949494]">
-            SEARCH
-          </p>
-
+          <p className="mb-2 text-[13px] font-normal tracking-wide text-[#949494]">SEARCH</p>
           <input
             placeholder="Search by title"
             className="h-[52px] w-full border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
           />
         </div>
 
-        <form className="grid gap-3">
-          <p className="text-[13px] font-normal tracking-wide text-[#949494]">
-            NEW NOTE
-          </p>
-
+        <form onSubmit={handleSubmit} className="grid gap-3">
+          <p className="text-[13px] font-normal tracking-wide text-[#949494]">NEW NOTE</p>
           <input
             name="title"
             value={formData.title}
@@ -60,7 +77,6 @@ function Notes() {
             placeholder="Title"
             className="h-[52px] w-full border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
           />
-
           <textarea
             name="body"
             value={formData.body}
@@ -68,7 +84,6 @@ function Notes() {
             placeholder="Write your note"
             className="h-[120px] w-full resize-none py-3 border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
           />
-
           <button
             type="submit"
             className="h-[50px] cursor-pointer bg-[#b83f45] text-[17px] font-normal text-white hover:bg-[#a33439]"
@@ -91,7 +106,6 @@ function Notes() {
                 title={note.title}
                 body={note.body}
               />
-
               <button
                 type="button"
                 className="absolute top-4 right-5 cursor-pointer text-[26px] leading-none text-[#949494] hover:text-[#c18585]"
