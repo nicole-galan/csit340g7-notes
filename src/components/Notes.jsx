@@ -1,7 +1,6 @@
-
 import { useState } from 'react'
 import NoteCard from './NoteCard.jsx'
-
+ 
 function Notes() {
   const [notes, setNotes] = useState([
     {
@@ -15,12 +14,14 @@ function Notes() {
       body: "Practice writing one handler for many inputs."
     }
   ])
-
+ 
   const [formData, setFormData] = useState({
     title: '',
     body: ''
   })
-
+ 
+  const [searchQuery, setSearchQuery] = useState('')
+ 
   function handleChange(event) {
     const { name, value } = event.target
     setFormData((prevData) => ({
@@ -28,48 +29,54 @@ function Notes() {
       [name]: value
     }))
   }
-
+ 
   function handleSubmit(event) {
     event.preventDefault()
-
+ 
     const trimmedTitle = formData.title.trim()
     const trimmedBody = formData.body.trim()
-
+ 
     if (!trimmedTitle || !trimmedBody) return
-
+ 
     const newNote = {
       id: Date.now(),
       title: trimmedTitle,
       body: trimmedBody
     }
-
+ 
     setNotes((prevNotes) => [...prevNotes, newNote])
-
+ 
     setFormData({
       title: '',
       body: ''
     })
   }
-
+ 
   function handleDelete(idToDelete) {
     setNotes((prevNotes) => prevNotes.filter((note) => note.id !== idToDelete))
   }
-
+ 
+  const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+ 
   return (
     <div className="grid min-h-screen grid-cols-[420px_1fr]">
       <aside className="sticky top-0 flex h-screen flex-col gap-5 bg-white px-8 py-9 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]">
         <h1 className="text-[72px] leading-none font-extralight text-[#b83f45]">
           notes
         </h1>
-
+ 
         <div>
           <p className="mb-2 text-[13px] font-normal tracking-wide text-[#949494]">SEARCH</p>
           <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title"
             className="h-[52px] w-full border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
           />
         </div>
-
+ 
         <form onSubmit={handleSubmit} className="grid gap-3">
           <p className="text-[13px] font-normal tracking-wide text-[#949494]">NEW NOTE</p>
           <input
@@ -94,12 +101,12 @@ function Notes() {
           </button>
         </form>
       </aside>
-
+ 
       <section className="px-12 py-11">
         <h2 className="mb-6 text-3xl">All notes</h2>
-
+ 
         <ul className="grid grid-cols-3 items-start gap-5">
-          {notes.map((note) => (
+          {filteredNotes.map((note) => (
             <li
               key={note.id}
               className="relative min-h-32 bg-white px-6 py-5 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]"
@@ -118,13 +125,13 @@ function Notes() {
             </li>
           ))}
         </ul>
-
-        {notes.length === 0 && (
+ 
+        {filteredNotes.length === 0 && (
           <p className="text-lg text-[#949494]">No notes found</p>
         )}
       </section>
     </div>
   )
 }
-
+ 
 export default Notes
