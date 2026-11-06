@@ -1,3 +1,4 @@
+import NoteCard from "./NoteCard"
 
 function Notes() {
   return (
