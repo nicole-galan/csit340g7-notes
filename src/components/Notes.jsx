@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Notecard from './Notecard.jsx'
  
 function Notes() {
@@ -20,18 +20,23 @@ function Notes() {
     body: ''
   })
  
-  const [searchQuery, setSearchQuery] = useState('')
- 
-  function handleChange(event) {
-    const { name, value } = event.target
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    localStorage.setItem('notes', JSON.stringify(notes))
+  }, [notes])
+
+
+  function handleChange(e) {
+    const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
       [name]: value
     }))
   }
  
-  function handleSubmit(event) {
-    event.preventDefault()
+  function handleSubmit(e) {
+    e.preventDefault()
  
     const trimmedTitle = formData.title.trim()
     const trimmedBody = formData.body.trim()
@@ -57,7 +62,7 @@ function Notes() {
   }
  
   const filteredNotes = notes.filter((note) =>
-    note.title.toLowerCase().includes(searchQuery.toLowerCase())
+    note.title.toLowerCase().includes(search.toLowerCase())
   )
  
   return (
@@ -70,8 +75,8 @@ function Notes() {
         <div>
           <p className="mb-2 text-[13px] font-normal tracking-wide text-[#949494]">SEARCH</p>
           <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title"
             className="h-[52px] w-full border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
           />
