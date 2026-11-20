@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Notecard from './Notecard.jsx'
 
 const startingNotes = [
@@ -76,10 +76,10 @@ function Notes() {
   }
 
   function handleDelete(idToDelete) {
-    setNotes((prevNotes) =>
-      prevNotes.filter((note) => note.id !== idToDelete)
-    )
-  }
+    const handleDelete = useCallback((id) => {
+        setNotes((prevNotes) =>
+        prevNotes.filter((note) => note.id !== idToDelete))
+    }, [notes])
 
   const visibleNotes = useMemo(() => {
     return notes.filter((note) =>
@@ -148,17 +148,11 @@ function Notes() {
               className="relative min-h-32 bg-white px-6 py-5 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]"
             >
               <Notecard
+                id={note.id}
                 title={note.title}
                 body={note.body}
+                onDelete={handleDelete}
               />
-
-              <button
-                type="button"
-                onClick={() => handleDelete(note.id)}
-                className="absolute top-4 right-5 cursor-pointer text-[26px] leading-none text-[#949494] hover:text-[#c18585]"
-              >
-                ×
-              </button>
             </li>
           ))}
         </ul>

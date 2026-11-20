@@ -1,10 +1,11 @@
 
-import { useState, useContext } from 'react'
+import { useState, useContext, memo } from 'react'
 import { SettingsContext } from '../SettingsContext.js'
 
-function Notecard({ title, body }) {
+function Notecard({ id, title, body, onDelete }) {
   const [showMore, setShowMore] = useState(false)
   const { largeText } = useContext(SettingsContext)
+  console.log('render', title)
 
   return (
     <div>
@@ -37,8 +38,15 @@ function Notecard({ title, body }) {
       >
         {showMore ? 'Show less' : 'Show more'}
       </button>
+      <button
+        type="button"
+        onClick={() => onDelete(id)}
+        className="absolute top-4 right-5 cursor-pointer text-[26px] leading-none text-[#949494] hover:text-[#c18585]"
+      >
+        ×
+      </button>
     </div>
   )
 }
 
-export default Notecard
+export default memo(Notecard)
