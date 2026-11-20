@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Notecard from './Notecard.jsx'
 
@@ -21,9 +20,11 @@ function Notes() {
     return saved ? JSON.parse(saved) : startingNotes
   })
 
-  const [form, setForm] = useState({
-    title: '',
-    body: ''
+  const [form, setForm] = useState(() => {
+    const savedDraft = localStorage.getItem('draft')
+    return savedDraft
+      ? JSON.parse(savedDraft)
+      : { title: '', body: '' }
   })
 
   const [search, setSearch] = useState('')
@@ -72,14 +73,16 @@ function Notes() {
       body: ''
     })
 
+    localStorage.removeItem('draft')
+
     titleRef.current.focus()
   }
 
-  function handleDelete(idToDelete) {
-    const handleDelete = useCallback((id) => {
-        setNotes((prevNotes) =>
-        prevNotes.filter((note) => note.id !== idToDelete))
-    }, [notes])
+  const handleDelete = useCallback((idToDelete) => {
+    setNotes((prevNotes) =>
+      prevNotes.filter((note) => note.id !== idToDelete)
+    )
+  }, [])
 
   const visibleNotes = useMemo(() => {
     return notes.filter((note) =>
