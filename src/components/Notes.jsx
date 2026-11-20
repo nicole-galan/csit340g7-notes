@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import NoteCard from './NoteCard.jsx'
+import Notecard from './Notecard.jsx'
  
 function Notes() {
   const [notes, setNotes] = useState([
@@ -111,7 +111,7 @@ function Notes() {
               key={note.id}
               className="relative min-h-32 bg-white px-6 py-5 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]"
             >
-              <NoteCard
+              <Notecard
                 title={note.title}
                 body={note.body}
               />

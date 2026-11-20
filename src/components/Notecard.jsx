@@ -1,7 +1,7 @@
 
 import { useState } from 'react'
 
-function NoteCard({ title, body }) {
+function Notecard({ title, body }) {
   const [showMore, setShowMore] = useState(false)
 
   return (
@@ -23,4 +23,4 @@ function NoteCard({ title, body }) {
   )
 }
 
-export default NoteCard
+export default Notecard
