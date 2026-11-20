@@ -1,26 +1,36 @@
 import { useState, useEffect } from 'react'
 import Notecard from './Notecard.jsx'
+
+const startingNotes = [
+  {
+    id: 1,
+    title: 'Review map and filter',
+    body: 'Redo the TodoMVC steps without looking at the guide.',
+  },
+  {
+    id: 2,
+    title: 'Prepare for the quiz',
+    body: 'Practice writing one handler for many inputs.',
+  },
+]
  
 function Notes() {
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "Review map and filter",
-      body: "Redo the TodoMVC steps without looking at the guide."
-    },
-    {
-      id: 2,
-      title: "Prepare for the quiz",
-      body: "Practice writing one handler for many inputs."
-    }
-  ])
+   const [notes, setNotes] = useState(() => {
+    const saved = localStorage.getItem('notes')
+    return saved ? JSON.parse(saved) : startingNotes
+  })
  
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     title: '',
     body: ''
   })
  
   const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('notes')
+    if (saved) setNotes(JSON.parse(saved))
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('notes', JSON.stringify(notes))
@@ -29,7 +39,7 @@ function Notes() {
 
   function handleChange(e) {
     const { name, value } = e.target
-    setFormData((prevData) => ({
+    setForm((prevData) => ({
       ...prevData,
       [name]: value
     }))
@@ -38,8 +48,8 @@ function Notes() {
   function handleSubmit(e) {
     e.preventDefault()
  
-    const trimmedTitle = formData.title.trim()
-    const trimmedBody = formData.body.trim()
+    const trimmedTitle = form.title.trim()
+    const trimmedBody = form.body.trim()
  
     if (!trimmedTitle || !trimmedBody) return
  
@@ -51,7 +61,7 @@ function Notes() {
  
     setNotes((prevNotes) => [...prevNotes, newNote])
  
-    setFormData({
+    setForm({
       title: '',
       body: ''
     })
@@ -86,14 +96,14 @@ function Notes() {
           <p className="text-[13px] font-normal tracking-wide text-[#949494]">NEW NOTE</p>
           <input
             name="title"
-            value={formData.title}
+            value={form.title}
             onChange={handleChange}
             placeholder="Title"
             className="h-[52px] w-full border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
           />
           <textarea
             name="body"
-            value={formData.body}
+            value={form.body}
             onChange={handleChange}
             placeholder="Write your note"
             className="h-[120px] w-full resize-none py-3 border border-[#e6e6e6] px-4 text-lg outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
