@@ -9,6 +9,7 @@ const supabase = createClient(
 
 const app = express()
 app.use(cors({ origin: 'http://localhost:5174' }))
+app.use(express.json())
 
 // GET /notes: Read all notes from Supabase, oldest first.
 app.get('/notes', async (req, res) => {
@@ -19,6 +20,22 @@ app.get('/notes', async (req, res) => {
   }
 
   res.json(data)
+})
+
+app.post('/notes', async (req, res) => {
+  const { title, body } = req.body
+
+  const { data, error } = await supabase
+    .from('notes')
+    .insert({ title, body })
+    .select()
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: error.message })
+  }
+
+  res.status(201).json(data)
 })
 
 app.listen(3000, (error) => {

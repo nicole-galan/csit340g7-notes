@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Notecard from './Notecard.jsx'
 
@@ -64,30 +65,32 @@ function Notes() {
     }))
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
-    const trimmedTitle = form.title.trim()
-    const trimmedBody = form.body.trim()
+    const title = form.title.trim()
+    const body = form.body.trim()
 
-    if (!trimmedTitle || !trimmedBody) return
+    if (!title || !body) return
 
-    const newNote = {
-      id: Date.now(),
-      title: trimmedTitle,
-      body: trimmedBody
+    try {
+      const res = await fetch(API_URL + '/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, body }),
+      })
+
+      if (!res.ok) {
+        throw new Error('The server answered ' + res.status)
+      }
+
+      const newNote = await res.json()
+      setNotes([...notes, newNote])
+      setForm({ title: '', body: '' })
+      titleRef.current.focus()
+    } catch (err) {
+      setError(err.message)
     }
-
-    setNotes((prevNotes) => [...prevNotes, newNote])
-
-    setForm({
-      title: '',
-      body: ''
-    })
-
-    localStorage.removeItem('draft')
-
-    titleRef.current.focus()
   }
 
   const handleDelete = useCallback((idToDelete) => {
