@@ -1,16 +1,22 @@
 import express from 'express'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SECRET_KEY,
+)
 
 const app = express()
 
-// GET /notes: Return a sample note to the client.
-app.get('/notes', (req, res) => {
-  res.json([
-    {
-      id: 1,
-      title: 'Hello from the server',
-      body: 'This note is written in server.js.',
-    },
-  ])
+// GET /notes: Read all notes from Supabase, oldest first.
+app.get('/notes', async (req, res) => {
+  const { data, error } = await supabase.from('notes').select().order('id')
+
+  if (error) {
+    return res.status(500).json({ error: error.message })
+  }
+
+  res.json(data)
 })
 
 app.listen(3000, (error) => {
