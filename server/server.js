@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -7,6 +8,7 @@ const supabase = createClient(
 )
 
 const app = express()
+app.use(cors({ origin: 'http://localhost:5174' }))
 
 // GET /notes: Read all notes from Supabase, oldest first.
 app.get('/notes', async (req, res) => {
